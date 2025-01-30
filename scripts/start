@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+dp_error_flag=0
+
+# Check if jq is installed
+if ! command -v jq >/dev/null 2>&1; then
+  echo "jq is not installed."
+  echo "Manual installation instructions: Visit https://jqlang.github.io/jq/ for more information."
+  dp_error_flag=1
+fi
+
+# Check if nc is installed
+if ! command -v nc >/dev/null 2>&1; then
+  echo "Netcat (nc) is not installed."
+  dp_error_flag=1
+fi
+
+# Stop script if any of the dependencies have failed
+if [[ "$dp_error_flag" -eq 1 ]]; then
+  echo "Missing dependencies. Please install them and run the script again."
+  exit 1
+fi
+
+function initPolybftConsensus() {
+  echo "Running with polybft consensus"
+  genesis_params="--consensus polybft"
+
+  address5=$(./polygon-edge polybft-secrets --insecure --data-dir test-chain-5 | grep Public | head -n 1 | awk -F ' ' '{print $5}')
+}
+
+function startServerFromBinary() {
+  # if [ "$1" == "write-logs" ]; then
+    echo "Writing validators logs to the files..."
+    ./polygon-edge server --data-dir ./test-chain-5 --chain ./genesis.json \
+      --grpc-address :10000 --libp2p 0.0.0.0:30301 --jsonrpc :10002 --relayer \
+      --num-block-confirmations 2 --seal --log-level INFO 2>&1 | tee ./validator-5.log &
+    wait
+}
+
+echo "Running polybft environment from local binary..."
+
+# Initialize polybft consensus
+initPolybftConsensus
+startServerFromBinary 
+exit 0

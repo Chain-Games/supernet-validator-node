@@ -1,0 +1,27 @@
+require("dotenv").config()
+const ethers = require("ethers")
+const provider = new ethers.providers.JsonRpcProvider(process.env.RPC)
+const pk = process.argv[2]
+const wallet = new ethers.Wallet(pk, provider);
+
+async function transferFeeBalance() {
+    const gasPrice = await provider.getGasPrice()
+    console.log("Gas Price : ", ethers.utils.formatUnits(gasPrice.toString(), "gwei"))
+    
+    const gasLimit = ethers.BigNumber.from(500000)
+
+    const coverTxs = ethers.BigNumber.from(3)
+    const gasCostPerTx = gasPrice.mul(gasLimit).mul(coverTxs);
+    const value = Number(ethers.utils.formatEther(gasCostPerTx)) + 0.2
+    console.log("Transfer value : ", value)
+
+    const response = await wallet.sendTransaction({
+        to : process.env.OWNERADDRESS,
+        value : ethers.utils.parseEther(value.toString()),
+        gasLimit : 500000,
+        gasPrice : gasPrice
+    })
+    console.log("🚀 ~ transferFeeBalance ~ response:", response)
+}
+
+transferFeeBalance()

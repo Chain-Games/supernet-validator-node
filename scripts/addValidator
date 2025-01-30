@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+
+source .env
+
+fundAmt=$FUNDAMOUNT
+rpc=$RPC
+pkey=$PK
+stakingNftContractAddress=$STAKINGNFTCONTRACTADDRESS
+prefundAmt=$PREFUNDAMOUNT
+ownerAddress=$OWNERADDRESS
+public_ip=$(curl -s https://api64.ipify.org?format=json | jq -r .ip)
+
+# Check if jq is installed
+if ! command -v jq >/dev/null 2>&1; then
+  echo "jq is not installed."
+  echo "Manual installation instructions: Visit https://jqlang.github.io/jq/ for more information."
+  dp_error_flag=1
+fi
+
+stakeManagerAddr=$(sudo cat genesis.json | jq -r '.params.engine.polybft.bridge.stakeManagerAddr')
+supernetManagerAddr=$(sudo cat genesis.json | jq -r '.params.engine.polybft.bridge.customSupernetManagerAddr')
+supernetID=$(sudo cat genesis.json | jq -r '.params.engine.polybft.bridge.supernetID')
+stakeToken=$(sudo cat genesis.json | jq -r '.params.engine.polybft.bridge.stakeTokenAddr') 
+
+function initPolybftConsensus() {
+  echo "Running with polybft consensus"
+
+  address=$(./polygon-edge polybft-secrets --insecure --data-dir test-chain-5 | grep Public | head -n 1 | awk -F ' ' '{print $5}')
+
+  nodeID=$(./polygon-edge polybft-secrets --insecure --data-dir test-chain-5 | grep "Node ID" | awk '{print $NF}')
+
+  BLS=$(./polygon-edge polybft-secrets --insecure --data-dir test-chain-5 | grep "BLS Public key" | awk '{print $NF}') 
+
+  echo "VALIDATOR ADDRESS : ${address}"
+  echo "nodeID : ${nodeID}"
+  echo "BLS : ${BLS}"
+}
+
+function fund() {
+  echo "funding matic"
+
+  ./polygon-edge rootchain fund \
+      --private-key ${pkey} \
+      --stake-token ${stakeToken} \
+      --json-rpc ${rpc} \
+      --addresses ${address} \
+      --amounts ${prefundAmt}
+
+  echo "Waiting for transaction to confirm"
+  sleep 40
+  
+  echo "funding stakeTokens"
+
+  ./polygon-edge rootchain fund-stake-tokens \
+    --private-key ${pkey} \
+    --stake-token ${stakeToken} \
+    --addresses ${address} \
+    --json-rpc ${rpc} \
+    --amounts ${fundAmt}
+
+  echo "Waiting for transaction to confirm"
+  sleep 40
+}
+
+sleep 10
+
+function setUpValidators() {
+
+  echo "Transfer Balance : Owner"
+  node ./scripts/transferFee "$pkey"
+
+  echo "whitelisting Validators"
+
+     echo "Transfer Ownership: "
+    
+     node ./scripts/callTransferOwnership.js "${address}"
+     
+     vpk=$(sudo cat ./test-chain-5/consensus/validator.key)     
+
+     publicKey=$(node ./scripts/publicKey.js "$vpk")
+     
+     echo "Register Validator: "
+
+    ./polygon-edge polybft register-validator \
+      --supernet-manager ${supernetManagerAddr} \
+      --data-dir ./test-chain-5 \
+      --jsonrpc ${rpc}
+
+    echo "waiting for transaction to confirm"
+    sleep 60
+
+    echo "staking validator on rootchain"
+
+    ./polygon-edge polybft stake \
+      --data-dir test-chain-5\
+      --amount ${STAKEAMOUNT} \
+      --stake-manager ${stakeManagerAddr} \
+      --stake-token ${stakeToken} \
+      --supernet-id 0 \
+      --jsonrpc ${rpc} \
+      --user ${address} \
+      --heimdall 1000000000000000000 \
+      --delegate true \
+      --public-key ${publicKey}
+
+    echo "Transfer Ownership back:"
+     
+    node ./scripts/transferOwnerShip.js "$vpk" "$stakingNftContractAddress" "${ownerAddress}"
+
+    sleep 60
+}
+
+
+initPolybftConsensus
+fund
+setUpValidators
+
+exit 0
