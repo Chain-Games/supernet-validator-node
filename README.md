@@ -1,7 +1,16 @@
 # Supernet Validator Node guide
 
 ## Prerequisites
-* A Wallet with `5 MATIC` & `(250k + 10) CHAIN` on Polygon mainnet. We will refer to this wallet as `Primary Wallet`.
+A Wallet with `5 POL (MATIC)` & `(250k + 10) CHAIN` on Polygon mainnet. We will refer to this wallet as `Primary Wallet`.
+
+## Hardware Requirements
+A dedicated server or virtual private server (VPS) with the following hardware:
+
+Component: [Minimum Requirement | Recommended]<br>
+Processor: [4-core CPU | 8-core CPU]<br>
+Memory: [8 GB RAM | 16 GB RAM]<br>
+Storage: [160 GB SSD | 1 TB SSD]<br>
+Network: [High-speed internet connection | Dedicated server with gigabit connection]
 
 ## Technical
 When starting to setup  `supernet validator node` , there are some additional dependencies:
