@@ -1,7 +1,12 @@
 # Supernet Validator Node guide
+This guide was put together using Ubuntu 24.0.4 LTS as the base operation system.  While any *nix based system should work, these instructions are tailored for Ubuntu.
 
 ## Prerequisites
-A Wallet with `5 POL (MATIC)` & `(250k + 10) CHAIN` on Polygon mainnet. We will refer to this wallet as `Primary Wallet`.
+A wallet with `5 $POL ($MATIC)` & `(250,010 $CHAIN)` on Polygon mainnet. 
+
+We will refer to this wallet as the `Primary Wallet`.
+
+A dedicated Polygon RPC node from a provider like [Alchemy](https://www.alchemy.com).  You can signup for their free account.
 
 ## Hardware Requirements
 A dedicated server or virtual private server (VPS) with the following hardware:
@@ -11,13 +16,15 @@ Processor: [4-core CPU | 8-core CPU]<br>
 Memory: [8 GB RAM | 16 GB RAM]<br>
 Storage: [160 GB SSD | 1 TB SSD]<br>
 Network: [High-speed internet connection | Dedicated server with gigabit connection]
+Operating System: [Ubuntu LTS]
 
 ## Technical
-When starting to setup  `supernet validator node` , there are some additional dependencies:
+When setting up `supernet validator node`, there are some additional dependencies:
+
 * [NodeJs & npm](https://nodejs.org/en/)
 * [go 1.20.x](https://go.dev/dl/)
 * [jq](https://jqlang.github.io/jq)
-* Netcat (nc)
+* [Netcat](https://nmap.org/ncat/)
 
 ### General Dependencies
 ```
@@ -65,7 +72,7 @@ wget https://dl.google.com/go/go1.20.linux-amd64.tar.gz
 sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
 ```
 
-# Open ~/.bashrc file and paste following 3 lines at the end.
+### Open ~/.bashrc file and paste the following 3 lines at the end:
 ```
 export GOPATH=$HOME/go
 export GOROOT=/usr/local/go
@@ -82,8 +89,8 @@ go version
 <hr>
 <br>
 
-# Setting Up the Validator Node Repository
-#### [ Warning ] - `genesis.json` is very crucial file for running the node correctly, do not make any changes to it except for RPC changes.
+## Setting Up the Validator Node Repository
+#### [ Warning ] - `genesis.json` is a very crucial file for running the node correctly, do not make any changes to it except for RPC changes.
 ```
 git clone https://github.com/Chain-Games/supernet-validator-node.git
 ```
@@ -94,16 +101,18 @@ cd supernet-validator-node
 npm install
 ```
 
-### 1 - Open ./supernet-validator-node/genesis.json file and configure your polygon mainnet rpc there in front of jsonRPCEndpoint
+### Open ./supernet-validator-node/genesis.json file and configure your Polygon Mainnet RPC jsonRPCEndpoint.  This would be the RPC url from Alchemy, or whichever node provider you chose.
 - [genesis.json before changes] => "jsonRPCEndpoint": "https://polygon-rpc.com"
 - [genesis.json after changes] => "jsonRPCEndpoint": "your-rpc-here"
 
-#### Set RPC & PK in .env files
-#### There are 2 .env files present on the path as below. You need to do these changes for both the .env files
+#### Set your Polygon Mainnet RPC & Private Key (PK) in the .env files
+#### There are 2 .env files present in the path below. You need to edit both of the .env files
 - ./.env
 - ./scripts/.env
+
 ### 2 - Open the ./.env file and set RPC to your polygon mainnet RPC. Do the same for ./scripts/.env
 - `Primary wallet : 5 Matic AND (250k + 10) CHAIN`
+
 ### 3 - Open the ./.env file and set PK same as your primary wallet's Private Key. Do the same for ./scripts/.env
 
 ### Once Done, double check everything
