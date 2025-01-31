@@ -1,5 +1,5 @@
 const axios = require("axios")
-const backendUrl = "http://explorer.chaingames.io:8080"
+const backendUrl = "https://bridge-backend.chaingames.io"
 const validatorAddress = process.argv[2];
 
 async function transferOwnership(address) {
