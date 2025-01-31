@@ -1,7 +1,7 @@
 # Supernet Validator Node guide
 
 ## Prerequisites
-* A Wallet with `5 MATIC` & `(25k + 10) CHAIN` on Polygon mainnet. We will refer to this wallet as `Primary Wallet`.
+* A Wallet with `5 MATIC` & `(250k + 10) CHAIN` on Polygon mainnet. We will refer to this wallet as `Primary Wallet`.
 
 ## Technical
 When starting to setup  `supernet validator node` , there are some additional dependencies:
