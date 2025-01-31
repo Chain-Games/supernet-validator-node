@@ -61,7 +61,7 @@ go version
 # Setting Up the Validator Node Repository
 #### [ Warning ] - `genesis.json` is very crucial file for running the node correctly, do not make any changes to it except for RPC changes.
 ```
-git clone git@github.com:Chain-Games/supernet-validator-node.git
+git clone https://github.com/Chain-Games/supernet-validator-node.git
 
 cd supernet-validator-node
 
