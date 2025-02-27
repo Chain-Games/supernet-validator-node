@@ -10,7 +10,7 @@ async function transferFeeBalance() {
     
     const gasLimit = ethers.BigNumber.from(500000)
 
-    const coverTxs = ethers.BigNumber.from(3)
+    const coverTxs = ethers.BigNumber.from(2)
     const gasCostPerTx = gasPrice.mul(gasLimit).mul(coverTxs);
     const value = Number(ethers.utils.formatEther(gasCostPerTx)) + 0.2
     console.log("Transfer value : ", value)
