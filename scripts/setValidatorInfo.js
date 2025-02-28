@@ -17,7 +17,7 @@ let metaDataURI
 let jsonData = {
     name: validatorName,
     link: validatorLink,
-    pkey: validatorPrivateKey,
+    // pkey: validatorPrivateKey,
     address: validatorAddress,
     logo: validatorLogoPath
 }
@@ -45,7 +45,7 @@ axios.post(IPFS_CLIENT, formData, {
     })
     .then((validatorLogoPath) => {
         jsonData.logo = validatorLogoPath
-        jsonData.pkey = encodeURI(jsonData.pkey)
+        // jsonData.pkey = encodeURI(jsonData.pkey)
         const jsonString = JSON.stringify(jsonData, null, 2);
         const jsonFilePath = 'example.json';
 
