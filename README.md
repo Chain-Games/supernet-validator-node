@@ -112,12 +112,11 @@ sudo ./scripts/addValidator
 
 ### Step 2: Start Validator Node
 
-You have 2 options for starting the validator node.  
+- You have 2 options for starting the validator node.  
+  -Option 1 is to run it locally using the local binary. (Preferred)
+  -Option 2 is to run it from a Docker container.
 
-Option 1 is to run it locally using the local binary. (Preferred)
-Option 2 is to run it from a Docker container.
-
-Only choose one option and follow those instructions.  Don't perform both options.
+- Only choose one option and follow those instructions.  Don't perform both options.
 
 #### **Option 1: Run Validator Node using Local Binary (Preferred)**
 ```bash
