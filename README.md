@@ -209,6 +209,9 @@ sudo cat ./test-chain-5/consensus/validator.key
 ```
 
 ### Set Validator Name & Image
+
+- Note:  Validator image should be png format and 256x256px.
+
 ```bash
 node setValidatorInfo.js <validator-private-key> <validator-name-here> " " <full-path-to-image.png>
 ```
