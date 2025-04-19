@@ -196,6 +196,8 @@ sudo killall polygon-edge
 ## Supernet Validator Node Helpers
 
 ### Retrieve Node Validator Private Key
+> **⚠ Warning**: The validator.key file is your node's private key.  DON'T LOSE IT or you will lose access to your stake.  Back this key up.  You can also add it to your MetaMask or any other EVM wallet as well to have another instance of it.
+
 ```bash
 sudo cat ./test-chain-5/consensus/validator.key
 ```
