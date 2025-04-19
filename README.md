@@ -1,210 +1,223 @@
-# Supernet Validator Node guide
+# Supernet Validator Node Guide
+
+This guide was created using **Ubuntu 24.0.4 LTS** as the base operating system. While any *nix-based system should work, these instructions are tailored for Ubuntu.
+
+---
 
 ## Prerequisites
-* A Wallet with `5 MATIC` & `(250k + 10) CHAIN` on Polygon mainnet. We will refer to this wallet as `Primary Wallet`.
 
-## Technical
-When starting to setup  `supernet validator node` , there are some additional dependencies:
-* [NodeJs & npm](https://nodejs.org/en/)
-* [go 1.20.x](https://go.dev/dl/)
-* [jq](https://jqlang.github.io/jq)
-* Netcat (nc)
+- A wallet with **5 $POL ($MATIC)** & **(250,010 $CHAIN)** on Polygon mainnet.
+  - This wallet will be referred to as the **Primary Wallet**.
+- A dedicated Polygon RPC node from a provider like [Alchemy](https://www.alchemy.com). You can sign up for a free account.
+
+---
+
+## Hardware Requirements
+
+| Component   | Minimum Requirement | Recommended |
+|------------|-------------------|-------------|
+| Processor  | 4-core CPU        | 8-core CPU  |
+| Memory     | 8 GB RAM          | 16 GB RAM   |
+| Storage    | 160 GB SSD        | 1 TB SSD    |
+| Network    | High-speed internet connection | Dedicated server with gigabit connection |
+| OS         | Ubuntu LTS        | Ubuntu LTS  |
+
+---
+
+## Technical Requirements
+
+When setting up the **Supernet Validator Node**, you need the following dependencies:
+
+- [Node.js 18.20.x & npm](https://nodejs.org/en/)
+- [Go 1.20.x](https://go.dev/dl/)
+- [jq](https://jqlang.github.io/jq)
+- [Netcat](https://nmap.org/ncat/)
 
 ### General Dependencies
-```
+```bash
 sudo apt update
-
-sudo apt install curl -y
-
-sudo apt install vim -y
-
-sudo apt install netcat-traditional -y
-
-sudo apt install jq -y
-
-sudo apt install screen -y
-
-sudo apt install psmisc -y
+sudo apt install -y curl vim netcat-traditional jq screen psmisc
 ```
-### NodeJs
+
+### Install Node.js & npm
+```bash
+sudo apt install -y nodejs npm
 ```
-sudo apt install nodejs
-
-sudo apt install npm
-
+```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-
+```
+```bash
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 ```
-### Go
+```bash
+nvm install 18
 ```
+```bash
+nvm use 18
+```
+
+### Install Go
+```bash
 wget https://dl.google.com/go/go1.20.linux-amd64.tar.gz
-
 sudo tar -C /usr/local -xzf go1.20.linux-amd64.tar.gz
+```
 
-# Open ~/.bashrc file and paste following 3 lines at the end.
+### Update `~/.bashrc`
+Append the following lines at the end of the file:
+```bash
 export GOPATH=$HOME/go
 export GOROOT=/usr/local/go
 export PATH=$PATH:/usr/local/go/bin
-
+```
+```bash
 source ~/.profile
-
 go version
 ```
 
-<br>
-<hr>
-<br>
+---
 
-# Setting Up the Validator Node Repository
-#### [ Warning ] - `genesis.json` is very crucial file for running the node correctly, do not make any changes to it except for RPC changes.
-```
-git clone git@github.com:kr-advait/supernet-validator-node.git
+## Setting Up the Validator Node Repository
 
+> **⚠ Warning**: The `genesis.json` file is crucial for running the node correctly. Do not modify it except for RPC changes.
+
+```bash
+git clone https://github.com/Chain-Games/supernet-validator-node.git
 cd supernet-validator-node
-
 npm install
 ```
 
-### 1 - Open genesis.json file and configure your polygon mainnet rpc there in front of jsonRPCEndpoint
-- [genesis.json before changes] => "jsonRPCEndpoint": "https://polygon-rpc.com"
-- [genesis.json after changes] => "jsonRPCEndpoint": "your-rpc-here"
+### Configure `genesis.json`
 
-#### Set RPC & PK in .env files
-#### There are 2 .env files present on the path as below. You need to do these changes for both the .env files
-- ./.env
-- ./scripts/.env
-### 2 - Open the ./.env file and set RPC to your polygon mainnet RPC. Do the same for ./scripts/.env
-- `Primary wallet : 5 Matic AND (250k + 10) CHAIN`
-### 3 - Open the ./.env file and set PK same as your primary wallet's Private Key. Do the same for ./scripts/.env
-
-### Once Done, double check everything
-
-### If everything seems correct, run the command below, and that should setup the validator correctly for you (given the prerequisites are met)
-
-<br>
-<hr>
-<br>
-
-# 1 - Setup Validator 
+Replace the `jsonRPCEndpoint` value with your **Polygon Mainnet RPC URL** from Alchemy (or another provider).
+```json
+"jsonRPCEndpoint": "your-rpc-here"
 ```
+
+### Update `.env` Files
+
+Modify the following files to include your **Polygon Mainnet RPC URL** and **Primary Wallet Private Key**:
+- `./.env`
+- `./scripts/.env`
+
+---
+
+## Setting Up the Validator
+
+### Step 1: Install Validator
+```bash
 sudo ./scripts/addValidator
 ```
 
-# 2 - Start Validator Node using any one : [ Binary | Docker ]
+### Step 2: Start Validator Node
 
-## 2.1 - Run Validator Node using local binary (Preffered*)
-```
+#### **Option 1: Run Validator Node using Local Binary (Preferred)**
+```bash
 sudo screen ./scripts/start
-
-# Close the terminal and run the command below in new terminal session to check if the process is running or not.
+```
+Check if the process is running:
+```bash
 ps ax | grep polygon
-
-# The above command should list the validator node process running. Something like this.
-[
-    ./polygon-edge server --data-dir ./test-chain-5 --chain ./genesis.json --grpc-address :10000 --libp2p 0.0.0.0:30301 --jsonrpc :10002 --relayer --num-block-confirmations 2 --seal --log-level INFO
-]
-
-# If you get screen is terminating issue, run the command without screen 
-
+```
+Example output:
+```bash
+./polygon-edge server --data-dir ./test-chain-5 --chain ./genesis.json --grpc-address :10000 --libp2p 0.0.0.0:30301 --jsonrpc :10002 --relayer --num-block-confirmations 2 --seal --log-level INFO
+```
+If **screen terminates**, run:
+```bash
 sudo ./scripts/start
 ```
 
-## 2.2 - Run Validator Node using Docker
-## Install Docker
-```
-# Add Docker's official GPG key:
+#### **Option 2: Run Validator Node using Docker**
+
+### Install Docker
+```bash
 sudo apt-get update
-sudo apt-get install ca-certificates curl
+sudo apt-get install -y ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
+```
 
-# Add the repository to Apt sources:
-echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
+### Add Docker Repository
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
+```
 
-# Install docker tools
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+### Install Docker Tools
+```bash
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
 
-# Check Docker Installation
+### Verify Docker Installation
+```bash
 sudo docker run hello-world
 ```
 
-## Run Validator Node (Docker)
-```
-# Run the command below to build the validator docker image. Along with dot (.) at end
+### Build & Run Validator Node with Docker
+```bash
 sudo docker build -t validator5 .
-
-# Start the docker container from built image.
 sudo docker run -d --name validator5 -it -p 10000:10000 -p 30301:30301 -p 10002:10002 validator5:latest /bin/fish
-
-# Now the docker container should be running. We need to enter the running docker container.
 sudo docker exec -it validator5 /bin/fish
+```
 
-# To start the validator node.
+### Start Validator Node Inside Docker
+```bash
 sudo screen ./scripts/start
-
-# Close the terminal.
 ```
-<br>
-<hr>
-<br>
 
-# :) Docker helper commands
+---
 
-## To Enter into running docker container
-```
+## Docker Helper Commands
+
+### Access Running Docker Container
+```bash
 sudo docker exec -it validator5 /bin/fish
 ```
 
-## Check the validator node process running
-```
+### Check Running Validator Node Process
+```bash
 ps ax | grep polygon
-
-# The above command should list the validator node process running. Something like this.
-[
-    ./polygon-edge server --data-dir ./test-chain-5 --chain ./genesis.json --grpc-address :10000 --libp2p 0.0.0.0:30301 --jsonrpc :10002 --relayer --num-block-confirmations 2 --seal --log-level INFO
-]
-
+```
+Example output:
+```bash
+./polygon-edge server --data-dir ./test-chain-5 --chain ./genesis.json --grpc-address :10000 --libp2p 0.0.0.0:30301 --jsonrpc :10002 --relayer --num-block-confirmations 2 --seal --log-level INFO
 ```
 
-## To stop the running validator node process
-
-```
+### Stop Running Validator Node Process
+```bash
 sudo killall polygon-edge
 ```
 
-<br>
-<hr>
-<br>
+---
 
-# :) Supernet Node Validator helpers
+## Supernet Validator Node Helpers
 
-## To get the private key of your node validator
-```
-sudo cat ./test-chain-5/consensus/validator.key 
+### Retrieve Node Validator Private Key
+```bash
+sudo cat ./test-chain-5/consensus/validator.key
 ```
 
-## To set name & image for your node validator
-```
-# Run without angular brackets <> by replacing your respective info.
+### Set Validator Name & Image
+```bash
 node setValidatorInfo.js <validator-private-key> <validator-name-here> " " <full-path-to-image.png>
-
-# for example (name = CG-Validator, image = /root/chaingames.png);
+```
+Example:
+```bash
 node setValidatorInfo.js validatorPrivateKey CG-Validator " " /root/chaingames.png
 ```
 
-## To set commission for your node validator
-```
+### Set Validator Commission Rate
+```bash
 node updateCommissionRate.js <pk> <amount-in-percentage>
-
-# for example (set 2% commission);
+```
+Example (2% commission):
+```bash
 node updateCommissionRate.js validatorPrivateKey 2
 ```
+
+---
+
+**🎉 Congratulations! Your Supernet Validator Node is now set up!**
