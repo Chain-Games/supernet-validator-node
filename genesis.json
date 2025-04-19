@@ -195,6 +195,12 @@
             "istanbul": {
                 "block": 0
             },
+	        "london": {
+                "block": 100
+            },
+            "londonfix": {
+                "block": 100
+            },
             "petersburg": {
                 "block": 0
             },
@@ -273,7 +279,7 @@
                     "bn256G2Addr": "0xD5E0f81ECe38b3987a5c02EA1Aa00b8b7F7dE5e4",
                     "jsonRPCEndpoint": "https://polygon-rpc.com",
                     "eventTrackerStartBlocks": {
-                        "0x83E429718D06aB9587F94658712a914D8174b36d": 68121152
+                        "0x83E429718D06aB9587F94658712a914D8174b36d": 68985500
                     }
                 },
                 "epochSize": 719,
