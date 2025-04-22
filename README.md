@@ -8,7 +8,7 @@ This guide was created using **Ubuntu 24.0.4 LTS** as the base operating system.
 
 - A wallet with **5 $POL ($MATIC)** & **(250,010 $CHAIN)** on Polygon mainnet.
   - This wallet will be referred to as the **Primary Wallet**.
-- A dedicated Polygon RPC node from a provider like [Alchemy](https://www.alchemy.com). You can sign up for a free account.
+- A dedicated Polygon RPC node from a provider like [Ankr](https://www.ankr.com/) or [Alchemy](https://www.alchemy.com). You can sign up for a free account.
 
 ---
 
@@ -90,7 +90,7 @@ npm install
 
 ### Configure `genesis.json`
 
-Replace the `jsonRPCEndpoint` value with your **Polygon Mainnet RPC URL** from Alchemy (or another provider).
+Replace the `jsonRPCEndpoint` value with your **Polygon Mainnet RPC URL** from Ankr or Alchemy (or another provider).
 ```json
 "jsonRPCEndpoint": "your-rpc-here"
 ```
@@ -210,11 +210,10 @@ sudo cat ./test-chain-5/consensus/validator.key
 
 ### Set Validator Name & Image
 
-- Note:  Validator image should be png format and 256x256px.
+- Note:  Navigate to this updateValidatorInfo repository, and follow the instructions there.
 
-```bash
-node setValidatorInfo.js <validator-private-key> <validator-name-here> " " <full-path-to-image.png>
-```
+[https://github.com/Chain-Games/updateValidatorInfo](https://github.com/Chain-Games/updateValidatorInfo)
+
 Example:
 ```bash
 node setValidatorInfo.js validatorPrivateKey CG-Validator " " /root/chaingames.png
