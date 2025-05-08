@@ -102,6 +102,8 @@ function setUpValidators() {
     --public-key ${publicKey}
 
     sleep 60
+
+    node ./scripts/addValidatorDetails.js "${address}"
 }
 
 
