@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from "fs";
 import axios from "axios";
 import { ethers, parseUnits, formatUnits } from "ethers";
 import STAKEMANAGER_ABI from "./abi/stakeManager.json" with { type: "json" };
+import { updateValidatorMetaData } from "./updateValidatorMetaData.js";
 
 // ---- Args ----
 const validatorPrivateKey = process.argv[2];
@@ -112,6 +113,10 @@ async function main() {
     console.log("🚀 Transaction submitted:", tx.hash);
     const receipt = await tx.wait();
     console.log("✅ Transaction confirmed in block:", receipt.blockNumber);
+
+    await updateValidatorMetaData(validatorAddress);
+    console.log("✅ Validator Metadata updated!")
+
   } catch (error) {
     console.error("❌ Error:", error.message || error);
   }

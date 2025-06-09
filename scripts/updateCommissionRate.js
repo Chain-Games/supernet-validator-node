@@ -1,3 +1,4 @@
+const axios = require("axios");
 require("dotenv").config()
 const { ethers } = require("ethers")
 
@@ -60,9 +61,58 @@ async function updateCommissionRate(amount) {
         const receipt = await tx.wait()
         console.log("✅ Transaction confirmed in block:", receipt.blockNumber)
 
+        await updateValidatorCommission(validatorAddress, validatorId);
+        console.log("✅ Validator commission rate updated");
     } catch (err) {
         console.error("❌ Error:", err.message || err)
     }
 }
 
-updateCommissionRate(amount)
+async function updateValidatorCommission(validatorAddress, validatorId) {
+  try {
+    const backendUrl = process.env.STAKING_BACKEND_URL;
+
+    if (!backendUrl) {
+      throw new Error(
+        "STAKING_BACKEND_URL is not defined in the environment variables."
+      );
+    }
+
+    if (!validatorAddress) {
+      throw new Error(
+        "Validator address is not provided. Please pass it as a command-line argument."
+      );
+    }
+
+    await axios({
+      method: "POST",
+      url: `${backendUrl}/api/validator/create-or-update-validator`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        validatorWalletAddress: validatorAddress,
+      },
+    });
+    // Update commission rate API for notification
+    await axios({
+      method: "POST",
+      url: `${backendUrl}/api/validator/update-commission`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        validatorId: validatorId,
+        
+      },
+    });
+    
+  } catch (error) {
+    console.error(
+      `An error occurred while updating validator commission rate for address: ${validatorAddress}`,
+      error
+    );
+  }
+}
+
+updateCommissionRate(amount);
