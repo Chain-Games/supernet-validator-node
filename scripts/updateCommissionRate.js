@@ -61,14 +61,14 @@ async function updateCommissionRate(amount) {
         const receipt = await tx.wait()
         console.log("✅ Transaction confirmed in block:", receipt.blockNumber)
 
-        await updateValidatorCommission(validatorAddress);
+        await updateValidatorCommission(validatorAddress, validatorId);
         console.log("✅ Validator commission rate updated");
     } catch (err) {
         console.error("❌ Error:", err.message || err)
     }
 }
 
-async function updateValidatorCommission(validatorAddress) {
+async function updateValidatorCommission(validatorAddress, validatorId) {
   try {
     const backendUrl = process.env.STAKING_BACKEND_URL;
 
@@ -94,6 +94,19 @@ async function updateValidatorCommission(validatorAddress) {
         validatorWalletAddress: validatorAddress,
       },
     });
+    // Update commission rate API for notification
+    await axios({
+      method: "POST",
+      url: `${backendUrl}/api/validator/update-commission`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        validatorId: validatorId,
+        
+      },
+    });
+    
   } catch (error) {
     console.error(
       `An error occurred while updating validator commission rate for address: ${validatorAddress}`,
